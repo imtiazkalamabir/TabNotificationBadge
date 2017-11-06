@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        int currentPage = mViewPager.getCurrentItem();
 
+//WHEN TAB 3 IS SELECTED THE CUSTOM VIEW IS REPLACED BY THE SELECTOR TAB ICON [AS NOTIFICATION IS SEEN]
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -76,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Im in TAB: " + pos, Toast.LENGTH_SHORT).show();
 //
                 if (pos == 2) {
+
+                    Log.d("currentPage", "onPageSelected: IM HEREEE");
+
+                    tabLayout.getTabAt(pos).setCustomView(null);
 
                     tabLayout.getTabAt(pos).setIcon(R.drawable.tabicon_selector);
                 }
@@ -128,16 +133,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public class DetailOnPageChangeListener extends ViewPager.SimpleOnPageChangeListener {
+    //This method is not USED and CALLED
+/*    public class DetailOnPageChangeListener extends ViewPager.SimpleOnPageChangeListener {
 
         private int currentPage;
 
         @Override
         public void onPageSelected(int position) {
+
             currentPage = position;
             Toast.makeText(MainActivity.this, "Im in TAB: " + currentPage, Toast.LENGTH_SHORT).show();
 //
             if (currentPage == 2) {
+
+                Log.d("currentPage", "onPageSelected: IM HEREEE");
+
+//                tabLayout.getTabAt(currentPage).setCustomView(null);
 
                 tabLayout.getTabAt(currentPage).setIcon(R.drawable.tabicon_selector);
             }
@@ -148,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         public final int getCurrentPage() {
             return currentPage;
         }
-    }
+    }*/
 
 
     /**
@@ -161,6 +172,8 @@ public class MainActivity extends AppCompatActivity {
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
         int count = 0;
+        TextView text_tab_item;
+        boolean clickFlag = false;
 
         public PlaceholderFragment() {
         }
@@ -185,13 +198,36 @@ public class MainActivity extends AppCompatActivity {
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             Button badge_button = (Button) rootView.findViewById(R.id.badger_button);
 
+
+
+
             badge_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
+
+
                     count++;
 
-                    tabLayout.getTabAt(2).setIcon(buildCounterDrawable(count));
+                    //METHOD-1: Intialize the custom view only when the count gets more than 0 and only once
+
+                    if(count > 0 && !clickFlag){
+
+                        Log.d("HITCLICK", "onClick: ONCE");
+
+                        View v = LayoutInflater.from(getContext()).inflate(R.layout.custom_badge_tab,null);
+                        tabLayout.getTabAt(2).setCustomView(v);
+                        text_tab_item = (TextView)v.findViewById(R.id.badge);
+                        ImageView img_tabtxt = (ImageView)v.findViewById(R.id.badge_icon);
+                        clickFlag = true;
+                    }
+
+                    //METHOD-2: BUILDING A COUNTER DRAWABLE AND SET TAB ICON
+
+//                    tabLayout.getTabAt(2).setIcon(buildCounterDrawable(count));
+
+                    setBadgeCounter();
+
 
 
                 }
@@ -200,7 +236,14 @@ public class MainActivity extends AppCompatActivity {
             return rootView;
         }
 
-        private Drawable buildCounterDrawable(int count) {
+        private void setBadgeCounter() {
+
+            text_tab_item.setText(""+count);
+        }
+
+// THIS IS THE METHOD-2 FOR GENERATING BADGE ON TAB ICON
+
+/*        private Drawable buildCounterDrawable(int count) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             View view = inflater.inflate(R.layout.custom_badge_tab, null);
 //        view.setBackgroundResource(backgroundImageId);
@@ -215,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
             view.measure(
                     View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                     View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-            view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+            view.layout(0, 0, 125, 125);
 
             view.setDrawingCacheEnabled(true);
             view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
@@ -223,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
             view.setDrawingCacheEnabled(false);
 
             return new BitmapDrawable(getResources(), bitmap);
-        }
+        }*/
 
 
     }
